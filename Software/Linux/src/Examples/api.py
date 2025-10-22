@@ -123,20 +123,20 @@ class api_structure:
     def send_packet(self, packet):
         head = 0xfffd
         payload = bytes(packet)
-        print("PAYLOAD:", payload)
+        # print("PAYLOAD:", payload)
         buf = struct.pack("<H", head) + payload
         crc = self.crc16(buf)
         buf += struct.pack("<H", crc)
-        print("Buf:", buf)
+        # print("Buf:", buf)
         self.__socket.sendall(buf)
-        print("SENT DATA\n")
+        # print("SENT DATA\n")
         
 #buffer: b'\xfd\xff\x14\x00\x02\x00<\x00h\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00KN'
     def ctrl_packet(self, speed, angular, front_led=0, back_led=0, version=0):
         my_ctrl_packet = uart_cp.UcpCtlCmd()
         self.make_header(my_ctrl_packet, UCP_MOTOR_CTL)
-        print("Header:", UCP_MOTOR_CTL)
-        print("Packet so far:", my_ctrl_packet)
+        # print("Header:", UCP_MOTOR_CTL)
+        # print("Packet so far:", my_ctrl_packet)
         my_ctrl_packet.speed     = speed
         my_ctrl_packet.angular   = angular
         # my_ctrl_packet.front_led = front_led
@@ -145,10 +145,17 @@ class api_structure:
 
         self.send_packet(my_ctrl_packet)
 
-    def IMU_calibrate(self, type):
+    def IMU_calibrate(self, cal_type):
         # sends request to calibrate either:
         # UICT_MAG (1) or UICT_IMU (2)
-        pass
+        my_request_packet = uart_cp.UcpImuCorrect()
+        self.make_header(my_request_packet, UCP_IMU_CORRECTION_START)
+        my_request_packet.type = cal_type
+
+        self.send_packet(my_request_packet)
+
+        # run IMU_calibrate_ACK(), see if there are any errors
+        
 
     def IMU_calibrate_ACK(self):
         # used by imu_calbirate to see if request was successful

@@ -161,6 +161,7 @@ def decode_ucp_0x0A(frame):
 def send_ctl_cmd(sock, speed, angular):
     cmd = UcpCtlCmd()
     cmd.hd.len = len(bytes(cmd))
+    print("Len:", len(bytes(cmd)))
     cmd.hd.id = UCP_MOTOR_CTL
     cmd.hd.index = 0
     cmd.speed = speed
@@ -170,6 +171,7 @@ def send_ctl_cmd(sock, speed, angular):
     buf = struct.pack("<H", head) + payload
     crc = crc16(buf)
     buf += struct.pack("<H", crc)
+    print("buffer:", buf)
     sock.sendall(buf)
 
 def robot_move(sock, duration=3.0, speed=60, angular=0):
