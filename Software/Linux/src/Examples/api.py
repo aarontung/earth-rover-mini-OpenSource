@@ -65,7 +65,7 @@ class api_structure:
         if pkt_id == UCP_STATE:
             pass
     
-    def ping():
+    def ping(self):
         # pings rover
         my_ping = uart_cp.UcpAlivePing()
         self.make_header(my_ping, UCP_KEEP_ALIVE)
@@ -139,10 +139,9 @@ class api_structure:
         # print("Packet so far:", my_ctrl_packet)
         my_ctrl_packet.speed     = speed
         my_ctrl_packet.angular   = angular
-        # my_ctrl_packet.front_led = front_led
-        # my_ctrl_packet.back_led  = back_led
-        # my_ctrl_packet.version   = version
-
+        my_ctrl_packet.front_led = front_led
+        my_ctrl_packet.back_led  = back_led
+        my_ctrl_packet.version   = version
         self.send_packet(my_ctrl_packet)
 
     def IMU_calibrate(self, cal_type):
@@ -151,35 +150,41 @@ class api_structure:
         my_request_packet = uart_cp.UcpImuCorrect()
         self.make_header(my_request_packet, UCP_IMU_CORRECTION_START)
         my_request_packet.type = cal_type
-
         self.send_packet(my_request_packet)
+        # call IMU Calibrate ACK and return error status or 1 upon success
 
         # run IMU_calibrate_ACK(), see if there are any errors
         
 
     def IMU_calibrate_ACK(self):
         # used by imu_calbirate to see if request was successful
+
         pass
 
     def general_ACK(self, packet):
+        # for every general ACK packet I get, return 1 on success, else return the error
         pass
 
     def get_report(self, frame):
+        # report_request_pkt = uart_cp. load data here then return the packet as a dictionary for the user
         pass
     
     def MAG_write(self, mag_bias_x, mag_bias_y, mag_bias_z):
+        # create packet, create header, fill in values, send it
         pass
 
     def IMU_write(self, acc_bias_x, acc_bias_y, acc_bias_z, mag_bias_x, mag_bias_y, mag_bias_z):
+        # create packet, create header, fill in values, send it
         pass
 
     def get_IMU(self):
+        # send request packet but then much read answer
         pass
 
     def OverTheAirUpdate(self, version):
         pass
 
-    def disconnect():
+    def disconnect(self):
         self.__socket.close()
 
 
